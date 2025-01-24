@@ -40,7 +40,7 @@ spec:
 Apply crd manifest to create AWX instance:
 > *Use of awx-operator namespace is for simplicity. AWX instances can have individual namespaces.*
 ```bash
-kubectl apply -n awx-operator -f workspace/project/awx/awx-instance.yml
+kubectl apply -n awx-operator -f awx-instance.yml
 ```
 
 ###### 3. Access Ansible-AWX WebUi

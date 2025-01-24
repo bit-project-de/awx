@@ -1,14 +1,18 @@
-### Ansible AWX install microk8s
+### Ansible-AWX kubernetes quick-start
+![AWX Login Screen](awx_login.png)
 
-Prerequisites:
- - kubectl & valid KUBE_CONFIG
+###### Prerequisites:
+ - microk8s
+ - kubectl
  - helm 2/3
+---
 
-Enable local storage provisioner (microk8s only)
-
+###### 1. Setup AWX Operator
+Optional: Enable local pv provisioner (microk8s only)
 ```bash
 microk8s enable hostpath-storage
 ```
+> *This command is executed on a microk8s node if required*
 
 Add AWX-Operator Helm repo:
 
@@ -18,11 +22,11 @@ helm repo add awx-operator https://ansible-community.github.io/awx-operator-helm
 
 Install AWX-Operator chart in awx-operator namespace:
 
-```bash
+  ```bash
 helm install awx-operator awx-operator/awx-operator -n awx-operator --create-namespace
 ```
-
-Define AWX instance in awx-instance.yml:
+###### 2. Setup first AWX Instance
+Define AWX instance in ```awx-instance.yml```:
 
 ```yaml
 ---
@@ -31,25 +35,28 @@ kind: AWX
 metadata:
   name: awx-instance
 spec:
-  service_type: nodeport
+  service_type: NodePort
 ```
 
-Apply yaml to create AWX instance:
+Apply crd manifest to create AWX instance:
 
 ```bash
 kubectl apply -n awx-operator -f workspace/project/awx/awx-instance.yml
 ```
+> *Use of awx-operator namespace is for simplicity. AWX instances can have individual namespaces.*
 
-Retrieve initial admin password after deployment finished:
+###### 3. Access Ansible-AWX WebUi
 
-```bash
-kubectl get secret awx-instance-admin-password -o jsonpath="{.data.password}" | base64 --decode ; echo
-```
-
-Get nodeport:
+Retrieve initial admin password:
 
 ```bash
-kubectl get svc | grep NodePort
+kubectl get secret -n awx-operator awx-instance-admin-password -o jsonpath="{.data.password}" | base64 --decode ; echo
 ```
 
-Access AWX webui at http://IP_OF_YOUR_K8S:NodePort and login as ```admin``` using the retrieved password.
+Get NodePort of webui:
+
+```bash
+kubectl get svc -n awx-operator -o go-template='{{range .items}}{{range.spec.ports}}{{if .nodePort}}{{.nodePort}}{{"\n"}}{{end}}{{end}}{{end}}'
+```
+
+Access AWX webui at ```http://KUBE_IP:NODE_PORT``` and login as ```admin``` using the retrieved password.

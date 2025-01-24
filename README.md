@@ -9,11 +9,10 @@
 
 ###### 1. Setup AWX Operator
 Optional: Enable local pv provisioner (microk8s only)
+> *This command is executed on a microk8s node if required*
 ```bash
 microk8s enable hostpath-storage
 ```
-> *This command is executed on a microk8s node if required*
-
 Add AWX-Operator Helm repo:
 
 ```bash
@@ -39,11 +38,10 @@ spec:
 ```
 
 Apply crd manifest to create AWX instance:
-
+> *Use of awx-operator namespace is for simplicity. AWX instances can have individual namespaces.*
 ```bash
 kubectl apply -n awx-operator -f workspace/project/awx/awx-instance.yml
 ```
-> *Use of awx-operator namespace is for simplicity. AWX instances can have individual namespaces.*
 
 ###### 3. Access Ansible-AWX WebUi
 

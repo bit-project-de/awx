@@ -1,8 +1,13 @@
 ### Ansible-AWX kubernetes quick-start
 ![AWX Login Screen](awx_login.png)
 
+#### Minimal configuration approach setup guide for getting startet with AWX. 
+This can be used as a base setup to further customize and improve.
+
+> While this setup guide was made using a microk8s target node to be easily reproducable, any kubernetes flavor is suitable. Only requirement is permission to write / create namespaces via kubectl and that the target platform can dynamically provision persistent volumes to allow postgresql instances to persist data.
+
 ###### Prerequisites:
- - microk8s
+ - target microk8s / minikube / managed k8s
  - kubectl
  - helm 2/3
 ---
@@ -38,7 +43,7 @@ spec:
 ```
 
 Apply crd manifest to create AWX instance:
-> *Use of awx-operator namespace is for simplicity. AWX instances can have individual namespaces.*
+> *While awx-operator namespace is reused here, AWX instances can / should live in seperate namespaces in real world scenarios.*
 ```bash
 kubectl apply -n awx-operator -f awx-instance.yml
 ```
